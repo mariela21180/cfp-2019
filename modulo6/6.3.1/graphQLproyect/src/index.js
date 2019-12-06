@@ -22,7 +22,15 @@ type Mutation {
 const resolvers = { 
     Query: {
         info: () => `This is the API of a GraphQL Proyect Test`,
-        feed: () => links
+        feed: () => links,
+        link: (parent, args) => {
+            for (let i = 0; i<links.length;i++) {
+                if ( links[i].id == args.id) {
+                    return links[i];
+                } 
+            }
+            return null;
+        },
     },
     Link: {
         id: (parent) => parent.id,
@@ -40,29 +48,26 @@ const resolvers = {
             return link
         },
         updateLink: (parent, args) => {
-            // let indice = -1;
-            // const link = links.find(function() {
-            //     for (let i = 0; i<links.length;i++) {
-            //         if ( links[i].id == args.id) {
-            //             indice = i;
-            //             return links[i];
-            //         }
-            //     }
-            // });
-            // link.description = args.description;
-            // link.url = args.url;
-            // links[indice] = link;
-            // return links[indice].id;
+            for (let i = 0; i<links.length;i++) {
+                if ( links[i].id == args.id) {
+                    let indice = i;
+                    let link = links[i];
+                    link.description = args.description;
+                    link.url = args.url;
+                    links[indice] = link;
+                    return links[indice];
+                } 
+            }
+            return null;
         },
         deleteLink: (parent, args) => {
             for (let i = 0; i<links.length;i++) {
                 if ( links[i].id == args.id) {      
                     let linkDeleted = links.splice(i, 1);
-                    console.log(linkDeleted);
                     return linkDeleted[0];
                 }
-                return null;
             }
+            return null;
         }
     },
 }
