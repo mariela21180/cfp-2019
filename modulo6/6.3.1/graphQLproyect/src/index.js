@@ -1,5 +1,6 @@
 'use strict'
 
+const { prisma } = require('./generated/prisma-client')
 const { GraphQLServer } = require('graphql-yoga')
 const typeDefs = `
 type Query {
@@ -71,10 +72,6 @@ const resolvers = {
         }
     },
 }
-const server = new GraphQLServer({
-    typeDefs, 
-    resolvers,
-})
 
 let idCount = 0;
 
@@ -90,5 +87,21 @@ let links = [
         description: 'GrupoAGNI ofitial website' 
     }
 ]
+
+async function main() { // Create a new link 
+    const newLink = await prisma.createLink({ 
+        url: 'www.prisma.io', 
+        description: 'Prisma replaces traditional ORMs' ,
+    })
+    console.log(`Created new link: ${newLink.url} (ID: ${newLink.id})`) // Read all links from the database and print them to the console 
+    const allLinks = await prisma.links() 
+    console.log(allLinks)
+} 
+main().catch(e => console.error(e))
+
+const server = new GraphQLServer({
+    typeDefs, 
+    resolvers,
+})
 
 server.start(() => console.log(`Server is running on http://localhost:4000`))
